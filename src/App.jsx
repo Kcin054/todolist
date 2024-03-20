@@ -1,34 +1,55 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [input, setInput] = useState('');
+  const [data, setData] = useState([]);
+  const [editIndex, setEditIndex] = useState(-1);
+
+  const handleChange = (event) =>{
+    setInput(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (editIndex !== -1) {
+      const newData = [...data];
+      newData[editIndex] = input;
+      setData(newData);
+      setEditIndex(-1);
+      setInput('');
+    } else {
+      setData([...data, input]);
+      setInput('');
+    }
+  };
+
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setInput(data[index]);
+  };
+
+  const handleRemove = (index) => {
+    const newData = data.filter((_,i) => i !== index);
+    setData(newData);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <h1>Todo List</h1>
+      <form onSubmit={handleSubmit}>
+        <input type='text' style={{margin:5}} value={input} onChange={handleChange}></input>
+        <button type='submit'>Submit</button>
+      </form>
+      {data.map((data, index) => (
+        <li key={index}>
+          {data}
+          <button onClick={() => handleEdit(index)} style={{margin:5}}>Edit</button>
+          <button onClick={() => handleRemove(index)} style={{margin:5}}>Delete</button>
+        </li>
+      ))}
+    </div>
   )
 }
 
