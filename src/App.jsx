@@ -1,35 +1,89 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import { Button, Input, Row } from "antd";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputValue, setInputValue] = useState("");
+  const [data, setData] = useState([]);
+  const [editIndex, setEditIndex] = useState(-1);
+
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (editIndex !== -1) {
+      const newData = [...data];
+      newData[editIndex] = inputValue;
+      setData(newData);
+      setEditIndex(-1);
+      setInputValue("");
+    } else {
+      setData([...data, inputValue]);
+      setInputValue("");
+    }
+  };
+
+  const handleEdit = (index) => {
+    setEditIndex(index);
+    setInputValue(data[index]);
+  };
+
+  const handleRemove = (index) => {
+    const newData = data.filter((_, i) => i !== index);
+    setData(newData);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>Todo List</h1>
+      <form>
+        <Input
+          type="text"
+          value={inputValue}
+          onChange={handleChange}
+          style={{ width: 300, margin: 10 }}
+        ></Input>
+        <Button
+          type="submit"
+          onClick={handleSubmit}
+          style={{ backgroundColor: "#08979c" }}
+        >
+          Submit
+        </Button>
+      </form>
+
+      <Row justify={"center"}>
+        {data.map((data, index) => (
+          <li key={index}>
+            {data}
+            <Button
+              onClick={() => handleEdit(index)}
+              style={{
+                margin: 10,
+                color: "#ffffff",
+                backgroundColor: "#434343",
+              }}
+            >
+              Edit
+            </Button>
+            <Button
+              onClick={() => handleRemove(index)}
+              style={{
+                margin: 10,
+                color: "#ffffff",
+                backgroundColor: "#ad2102",
+              }}
+            >
+              Delete
+            </Button>
+          </li>
+        ))}
+      </Row>
+    </div>
+  );
 }
 
-export default App
+export default App;
