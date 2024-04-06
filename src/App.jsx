@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import reactLogo from "./assets/react.svg";
+import viteLogo from "/vite.svg";
+import "./App.css";
+import FormInput from "./FormInput";
+import List from "./List";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputValue, setInputValue] = useState("");
+  const [data, setData] = useState([]);
+  const [indexEdit, setIndexEdit] = useState(-1);
+
+  const handleChange = (event) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.perventDefault();
+
+    if (indexEdit !== -1) {
+      const newData = [...data];
+      newData[indexEdit] = inputValue;
+      setData(newData);
+      setIndexEdit(-1);
+      setInputValue("");
+    } else {
+      setData(...data, inputValue);
+      setInputValue("");
+    }
+  };
+
+  const handleEdit = (index) => {
+    setIndexEdit(index);
+    setInputValue(data[index]);
+  };
+
+  const handleDelete = () => {
+    const newData = data.filter((_, i) => i !== index);
+    setData(newData);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <FormInput
+        inputValue={inputValue}
+        handleChange={handleChange}
+        handleSubmit={handleSubmit}
+      />
+      <List data={data} handleEdit={handleEdit} handleDelete={handleDelete} />
+    </div>
+  );
 }
 
-export default App
+export default App;
